@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pyttsx3
 import speech_recognition as sr
+import sounddevice as sd
 from tensorflow.keras.models import load_model
 import os
 
@@ -29,21 +30,20 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
-# Speech-to-text function
+# Speech-to-text function using sounddevice
 def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         st.info("🎤 Listening...")
-        audio = recognizer.listen(source)
         try:
+            audio = recognizer.listen(source)
             text = recognizer.recognize_google(audio)
             return text
         except sr.UnknownValueError:
             st.warning("❌ Could not understand the audio.")
-            return None
         except sr.RequestError:
             st.error("⚠ Speech service unavailable.")
-            return None
+    return None
 
 # Display sign video
 def display_sign_video(sign_text):
@@ -59,18 +59,30 @@ st.markdown("A system enabling seamless interaction between special and normal p
 role = st.radio("Select Mode:", ["Sign to Speech", "Speech to Sign"], horizontal=True)
 st.divider()
 
+# Webcam Setup with Session State
+if "camera_active" not in st.session_state:
+    st.session_state.camera_active = False
+
 if role == "Sign to Speech":
     st.subheader("✋ Sign Language to Speech")
-    cap = cv2.VideoCapture(0)
 
+    # Start Camera Button
     if st.button("🎥 Start Camera"):
+        st.session_state.camera_active = True
+
+    # Stop Camera Button
+    if st.button("🛑 Stop Camera"):
+        st.session_state.camera_active = False
+
+    if st.session_state.camera_active:
+        cap = cv2.VideoCapture(0)
         frame_placeholder = st.empty()
         progress_bar = st.progress(0)
         prediction_placeholder = st.empty()
         frames_list = []
         start_time = time.time()
 
-        while True:
+        while st.session_state.camera_active:
             ret, frame = cap.read()
             if not ret:
                 st.error("⚠ Camera error.")
@@ -93,11 +105,11 @@ if role == "Sign to Speech":
                 start_time = time.time()
                 frames_list = []
 
-    if st.button("🛑 Stop Camera"):
         cap.release()
 
 elif role == "Speech to Sign":
     st.subheader("🎤 Speech to Sign Language")
+
     if st.button("🎙 Start Speaking"):
         text = recognize_speech()
         if text:
