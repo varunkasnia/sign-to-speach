@@ -1,6 +1,9 @@
 streamlit
+tensorflow
 opencv-python-headless
 numpy
 pyttsx3
-SpeechRecognition
-tensorflow
+speechrecognition
+pyaudio
+streamlit-webrtc
+av
