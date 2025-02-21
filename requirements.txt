@@ -1,7 +1,8 @@
 streamlit
 numpy
-opencv-python
+opencv-python-headless
 tensorflow
 speechrecognition
 sounddevice
 pyttsx3
+
