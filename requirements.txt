@@ -8,3 +8,4 @@ pyaudio
 streamlit-webrtc
 av
 aiohttp
+watchdog
