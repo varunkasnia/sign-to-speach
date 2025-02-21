@@ -1,1 +1,6 @@
-
+streamlit
+opencv-python
+numpy
+pyttsx3
+SpeechRecognition
+tensorflow
