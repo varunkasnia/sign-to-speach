@@ -7,3 +7,4 @@ speechrecognition
 pyaudio
 streamlit-webrtc
 av
+aiohttp
